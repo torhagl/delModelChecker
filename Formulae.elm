@@ -1,12 +1,12 @@
 module Formulae exposing (..)
 
 import Agent exposing (..)
-import Prop as P
+import Prop
 
 
 type Formulae a
     = Top
-    | Prp P.Prop
+    | Prp Prop.Prop
     | Ng (Formulae a)
     | Disj (List (Formulae a))
 
@@ -18,10 +18,10 @@ show formulae =
             "Top"
 
         Prp prop ->
-            P.show prop
+            Prop.show prop
 
         Ng subForm ->
             "not(" ++ show subForm ++ ")"
 
         Disj listOfDisj ->
-            List.foldl (++) "(" <| List.intersperse " or " <| List.map show listOfDisj
+            (List.foldl (++) "(" <| List.intersperse " or " <| List.map show listOfDisj) ++ ")"

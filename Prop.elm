@@ -8,7 +8,7 @@ type Prop
     | Q Int
     | R Int
     | S Int
-    | Pred Agent Int -- Works as a predicate with closed world assumption. Handy in some situations.
+    | Pred Agent Int -- Indicate that an agent has a number. Useful in situations where you are modeling agents holding cards or similar cases.
 
 
 p : Prop
@@ -35,16 +35,28 @@ show : Prop -> String
 show prop =
     case prop of
         P int ->
-            "P" ++ toString int
+            if int == 0 then
+                "p"
+            else
+                "p" ++ toString int
 
         Q int ->
-            "Q" ++ toString int
+            if int == 0 then
+                "q"
+            else
+                "q" ++ toString int
 
         R int ->
-            "R" ++ toString int
+            if int == 0 then
+                "r"
+            else
+                "r" ++ toString int
 
         S int ->
-            "S" ++ toString int
+            if int == 0 then
+                "s"
+            else
+                "s" ++ toString int
 
         Pred ag int ->
             toString int ++ ag
