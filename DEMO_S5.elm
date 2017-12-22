@@ -26,6 +26,21 @@ type EpistM
     = Mo (List State) (List Agent) AccessRel ValFunction State
 
 
+empty : EpistM
+empty =
+    Mo [ 0 ] [ "a" ] emptyAcc emptyVal 0
+
+
+emptyAcc : AccessRel
+emptyAcc =
+    Dict.fromList [ ( "a", [] ) ]
+
+
+emptyVal : ValFunction
+emptyVal =
+    Dict.fromList [ ( 0, [] ) ]
+
+
 rel : EpistM -> Agent -> List EqClass
 rel (Mo _ _ accRel _ _) agent =
     case Dict.get agent accRel of
