@@ -4,22 +4,8 @@ import Dict exposing (..)
 import Formulae exposing (..)
 import Agent exposing (Agent)
 import Prop exposing (Prop)
-
-
-type alias State =
-    Int
-
-
-type alias AccessRel =
-    Dict Agent (List EqClass)
-
-
-type alias ValFunction =
-    Dict State (List Prop)
-
-
-type alias EqClass =
-    List Int
+import ValFunction as Val
+import AccessRel as Acc
 
 
 type EpistM
@@ -28,17 +14,7 @@ type EpistM
 
 empty : EpistM
 empty =
-    Mo [ 0 ] [ "a" ] emptyAcc emptyVal 0
-
-
-emptyAcc : AccessRel
-emptyAcc =
-    Dict.fromList [ ( "a", [] ) ]
-
-
-emptyVal : ValFunction
-emptyVal =
-    Dict.fromList [ ( 0, [] ) ]
+    Mo [ 0 ] [ "a" ] Acc.empty Val.empty 0
 
 
 rel : EpistM -> Agent -> List EqClass

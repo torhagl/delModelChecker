@@ -1,6 +1,8 @@
 module ExampleModels exposing (..)
 
 import DEMO_S5 as Demo exposing (EpistM)
+import ValFunction as Val
+import AccessRel as Rel
 import Dict
 import Prop exposing (..)
 
@@ -12,4 +14,4 @@ exampleModel =
 
 russianCardsModel : EpistM
 russianCardsModel =
-    Demo.Mo [0..139] [ "a", "b", "c" ] Demo.emptyAcc Demo.emptyVal 0
+    Demo.Mo (List.range 0 139) [ "a", "b", "c" ] Rel.empty Val.empty 0
