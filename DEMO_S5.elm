@@ -1,25 +1,9 @@
 module DEMO_S5 exposing (..)
 
 import Dict exposing (..)
-
-
-type alias Agent =
-    String
-
-
-type Prop
-    = P Int
-    | Q Int
-    | R Int
-    | S Int
-    | Pred Agent Int -- Works as a predicate with closed world assumption. Handy in some situations.
-
-
-type Form a
-    = Top
-    | Prp Prop
-    | Ng (Form a)
-    | Disj (List (Form a))
+import Formulae exposing (..)
+import Agent exposing (..)
+import Prop exposing (..)
 
 
 type alias State =

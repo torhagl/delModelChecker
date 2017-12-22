@@ -3,6 +3,9 @@ module Main exposing (..)
 import DEMO_S5 exposing (..)
 import Html exposing (..)
 import Dict exposing (..)
+import Formulae as Form exposing (Formulae)
+import Prop
+import ExampleModels exposing (..)
 
 
 main =
@@ -42,15 +45,20 @@ update msg model =
             ( { model | model = exampleModel }, Cmd.none )
 
 
-exampleModel : EpistM
-exampleModel =
-    Mo [ 0, 1 ] [ "a", "b" ] (Dict.fromList [ ( "a", [ [ 0 ], [ 1 ] ] ), ( "b", [ [ 0, 1 ] ] ) ]) (Dict.fromList [ ( 0, [ P 1 ] ), ( 1, [ P 2 ] ) ]) 0
-
-
 view : Model -> Html Msg
 view model =
     let
-        (Mo states _ _ _ _) =
+        (Mo states agents accesRel valFunc currentState) =
             model.model
     in
-        div [] <| List.map text <| List.map toString states
+        div [] <| List.map text <| List.map Form.show <| formulaeTrueInState model.model currentState
+
+
+formulaeTrueInState : EpistM -> State -> List (Formulae a)
+formulaeTrueInState (Mo _ _ _ valFunc _) st =
+    case Dict.get st valFunc of
+        Just props ->
+            List.map Form.Prp props
+
+        Nothing ->
+            []
