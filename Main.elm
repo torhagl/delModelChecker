@@ -51,7 +51,7 @@ view model =
         (Mo states agents accesRel valFunc currentState) =
             model.model
     in
-        div [] <| List.map text <| List.map Form.show <| formulaeTrueInState model.model currentState
+        div [] <| (text (toString (isTrueAt model.model 0 (Form.Ng <| Form.Prp Prop.p)))) :: (List.map text <| List.map Form.show <| formulaeTrueInState model.model currentState)
 
 
 formulaeTrueInState : EpistM -> State -> List (Formulae a)
