@@ -1,11 +1,11 @@
 module DEMO_S5 exposing (..)
 
-import Dict exposing (..)
-import Formulae exposing (..)
+import Expression exposing (..)
 import Agent exposing (Agent)
 import Prop exposing (Prop)
-import ValFunction as Val
-import AccessRel as Acc
+import ValFunction as Val exposing (ValFunction)
+import AccessRel as Acc exposing (EqClass, AccessRel)
+import State exposing (..)
 
 
 type EpistM
@@ -14,44 +14,33 @@ type EpistM
 
 empty : EpistM
 empty =
-    Mo [ 0 ] [ "a" ] Acc.empty Val.empty 0
+    Mo [] [] Acc.empty Val.empty 0
 
 
-rel : EpistM -> Agent -> List EqClass
-rel (Mo _ _ accRel _ _) agent =
-    case Dict.get agent accRel of
-        Just a ->
-            a
-
-        Nothing ->
-            []
-
-
-propsTrueInState : EpistM -> State -> List Prop
-propsTrueInState (Mo _ _ _ val _) st =
-    case Dict.get st val of
-        Just a ->
-            a
-
-        Nothing ->
-            []
-
-
-isTrueAt : EpistM -> State -> Formulae a -> Bool
-isTrueAt model st formulae =
+isTrueAt : EpistM -> State -> Expression a -> Bool
+isTrueAt model st expression =
     let
         (Mo sts ags rel val _) =
             model
     in
-        case formulae of
+        case expression of
             Top ->
                 True
 
-            Prp p ->
-                List.member p <| propsTrueInState model st
+            Atom p ->
+                List.member p <|
+                    case Val.get st val of
+                        Just a ->
+                            a
 
-            Ng subf ->
+                        Nothing ->
+                            []
+
+            Neg subf ->
                 not <| isTrueAt model st subf
 
             Disj listOfDisj ->
                 List.any (isTrueAt model st) listOfDisj
+
+            Conj listOfConj ->
+                List.all (isTrueAt model st) listOfConj

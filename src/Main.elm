@@ -2,10 +2,9 @@ module Main exposing (..)
 
 import DEMO_S5 exposing (..)
 import Html exposing (..)
-import Dict exposing (..)
-import Formulae as Form exposing (Formulae)
-import Prop
 import ExampleModels exposing (..)
+import Expression as Expr
+import Prop
 
 
 main =
@@ -51,14 +50,4 @@ view model =
         (Mo states agents accesRel valFunc currentState) =
             model.model
     in
-        div [] <| (text (toString (isTrueAt model.model 0 (Form.Ng <| Form.Prp Prop.p)))) :: (List.map text <| List.map Form.show <| formulaeTrueInState model.model currentState)
-
-
-formulaeTrueInState : EpistM -> State -> List (Formulae a)
-formulaeTrueInState (Mo _ _ _ valFunc _) st =
-    case Dict.get st valFunc of
-        Just props ->
-            List.map Form.Prp props
-
-        Nothing ->
-            []
+        div [] <| [ text <| toString <| isTrueAt model.model 0 (Expr.Neg <| Expr.Atom Prop.p) ]

@@ -1,42 +1,43 @@
 module AccessRel exposing (..)
 
-import Dict exposing (..)
+import Dict exposing (Dict)
 import Agent exposing (..)
+import State exposing (..)
 
 
-type alias AccessRel =
-    Maybe (Dict Agent (List EqClass))
+type AccessRel
+    = AccessRel (Dict Agent (List EqClass))
 
 
 type alias EqClass =
-    List Int
+    List State
 
 
 empty : AccessRel
 empty =
-    Nothing
+    AccessRel Dict.empty
 
 
 get : Agent -> AccessRel -> Maybe (List EqClass)
-get ag rel =
-    case rel of
-        Just acc ->
-            case Dict.get ag rel of
-                Just a ->
-                    Just a
-
-                Nothing ->
-                    Nothing
+get ag (AccessRel rel) =
+    case Dict.get ag rel of
+        Just a ->
+            Just a
 
         Nothing ->
             Nothing
 
 
 insert : Agent -> List EqClass -> AccessRel -> AccessRel
-insert ag eqclass acc =
-    case acc of
-        Just rel ->
-            Just <| Dict.insert ag eqclass rel
+insert ag eqclass (AccessRel acc) =
+    AccessRel <| Dict.insert ag eqclass acc
 
-        Nothing ->
-            Just <| Dict.insert ag eqclass Dict.empty
+
+fromList : List ( Agent, List EqClass ) -> AccessRel
+fromList list =
+    case list of
+        [] ->
+            empty
+
+        ( ag, eq ) :: xs ->
+            insert ag eq <| fromList xs
