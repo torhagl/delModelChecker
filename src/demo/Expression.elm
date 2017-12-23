@@ -10,6 +10,8 @@ type Expression a
     | Neg (Expression a)
     | Disj (List (Expression a))
     | Conj (List (Expression a))
+    | Kn Agent (Expression a)
+    | Pub (Expression a) (Expression a)
 
 
 show : Expression a -> String
@@ -21,11 +23,17 @@ show expression =
         Atom prop ->
             Prop.show prop
 
-        Neg subForm ->
-            "not(" ++ show subForm ++ ")"
+        Neg subexpr ->
+            "not(" ++ show subexpr ++ ")"
 
         Disj listOfDisj ->
             (List.foldl (++) "(" <| List.intersperse " or " <| List.map show listOfDisj) ++ ")"
 
         Conj listOfConj ->
             (List.foldl (++) "(" <| List.intersperse " and " <| List.map show listOfConj) ++ ")"
+
+        Kn ag subexpr ->
+            "(Kn" ++ ag ++ show subexpr ++ ")"
+
+        Pub upd subexpr ->
+            "([" ++ show upd ++ "]" ++ show subexpr ++ ")"

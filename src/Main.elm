@@ -3,7 +3,7 @@ module Main exposing (..)
 import DEMO_S5 exposing (..)
 import Html exposing (..)
 import ExampleModels exposing (..)
-import Expression as Expr
+import Expression as Expr exposing (Expression)
 import Prop
 
 
@@ -50,4 +50,20 @@ view model =
         (Mo states agents accesRel valFunc currentState) =
             model.model
     in
-        div [] <| [ text <| toString <| isTrueAt model.model 0 (Expr.Neg <| Expr.Atom Prop.p) ]
+        div []
+            [ div []
+                [ text <| Expr.show sampleExpr
+                , text "="
+                , text <| toString <| isTrueAt model.model 0 <| sampleExpr
+                ]
+            , div []
+                [ text <| Expr.show <| Expr.Atom Prop.p
+                , text "="
+                , text <| toString <| isTrueAt model.model 0 <| Expr.Atom Prop.p
+                ]
+            ]
+
+
+sampleExpr : Expression a
+sampleExpr =
+    Expr.Neg <| Expr.Atom Prop.p

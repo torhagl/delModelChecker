@@ -31,9 +31,14 @@ insert st props (ValFunction v) =
 
 fromList : List ( State, List Prop ) -> ValFunction
 fromList list =
-    case list of
-        [] ->
-            empty
+    ValFunction <| Dict.fromList list
 
-        ( st, props ) :: xs ->
-            insert st props <| fromList xs
+
+toList : ValFunction -> List ( State, List Prop )
+toList (ValFunction val) =
+    Dict.toList val
+
+
+filter : (State -> List Prop -> Bool) -> ValFunction -> ValFunction
+filter f (ValFunction val) =
+    ValFunction <| Dict.filter f val

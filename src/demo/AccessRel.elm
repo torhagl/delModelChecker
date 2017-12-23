@@ -13,6 +13,16 @@ type alias EqClass =
     List State
 
 
+getEqClass : Agent -> State -> AccessRel -> Maybe EqClass
+getEqClass ag st acc =
+    case get ag acc of
+        Just eqclasses ->
+            List.head <| List.filter (List.member st) eqclasses
+
+        Nothing ->
+            Nothing
+
+
 empty : AccessRel
 empty =
     AccessRel Dict.empty
@@ -35,9 +45,23 @@ insert ag eqclass (AccessRel acc) =
 
 fromList : List ( Agent, List EqClass ) -> AccessRel
 fromList list =
-    case list of
-        [] ->
-            empty
+    AccessRel <| Dict.fromList list
 
-        ( ag, eq ) :: xs ->
-            insert ag eq <| fromList xs
+
+toList : AccessRel -> List ( Agent, List EqClass )
+toList (AccessRel acc) =
+    Dict.toList acc
+
+
+map : (Agent -> List EqClass -> List EqClass) -> AccessRel -> AccessRel
+map f (AccessRel acc) =
+    AccessRel <| Dict.map f acc
+
+
+mapWithoutKey : (List EqClass -> List EqClass) -> AccessRel -> AccessRel
+mapWithoutKey f (AccessRel acc) =
+    let
+        ags =
+            Dict.keys acc
+    in
+        AccessRel <| Dict.foldl ((\_ v _ -> (List.map f v) []) acc)
