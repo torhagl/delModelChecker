@@ -3,6 +3,7 @@ module ValFunction exposing (..)
 import State exposing (..)
 import Dict exposing (Dict)
 import Prop exposing (..)
+import Agent as Ag exposing (Agent)
 
 
 type ValFunction
@@ -42,3 +43,8 @@ toList (ValFunction val) =
 filter : (State -> List Prop -> Bool) -> ValFunction -> ValFunction
 filter f (ValFunction val) =
     ValFunction <| Dict.filter f val
+
+
+partition : (State -> List Prop -> Bool) -> ValFunction -> ( ValFunction, ValFunction )
+partition f (ValFunction val) =
+    Tuple.mapSecond ValFunction <| Tuple.mapFirst ValFunction <| Dict.partition f val

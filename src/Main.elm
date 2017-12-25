@@ -3,7 +3,7 @@ module Main exposing (..)
 import DEMO_S5 exposing (..)
 import Html exposing (..)
 import ExampleModels exposing (..)
-import Expression as Expr exposing (Expression)
+import Formula as Form exposing (Formula)
 import Prop
 
 
@@ -52,18 +52,18 @@ view model =
     in
         div []
             [ div []
-                [ text <| Expr.show sampleExpr
+                [ text <| Form.show sampleExpr
                 , text "="
-                , text <| toString <| isTrueAt model.model 0 <| sampleExpr
+                , text <| toString <| isTrueAt model.model 1 <| sampleExpr
                 ]
             , div []
-                [ text <| Expr.show <| Expr.Atom Prop.p
+                [ text <| Form.show <| Form.Atom Prop.p
                 , text "="
-                , text <| toString <| isTrueAt model.model 0 <| Expr.Atom Prop.p
+                , text <| toString <| isTrueAt model.model 1 <| Form.Atom Prop.p
                 ]
             ]
 
 
-sampleExpr : Expression a
+sampleExpr : Formula a
 sampleExpr =
-    Expr.Neg <| Expr.Atom Prop.p
+    Form.Neg <| Form.Atom Prop.p

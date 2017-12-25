@@ -60,8 +60,4 @@ map f (AccessRel acc) =
 
 mapWithoutKey : (List EqClass -> List EqClass) -> AccessRel -> AccessRel
 mapWithoutKey f (AccessRel acc) =
-    let
-        ags =
-            Dict.keys acc
-    in
-        AccessRel <| Dict.foldl ((\_ v _ -> (List.map f v) []) acc)
+    AccessRel <| Dict.foldl (\ag v newdict -> Dict.insert ag (f v) newdict) Dict.empty acc

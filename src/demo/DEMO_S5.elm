@@ -1,6 +1,6 @@
 module DEMO_S5 exposing (..)
 
-import Expression exposing (..)
+import Formula exposing (..)
 import Agent exposing (Agent)
 import Prop exposing (Prop)
 import ValFunction as Val exposing (ValFunction)
@@ -17,13 +17,13 @@ empty =
     Mo [] [] Acc.empty Val.empty 0
 
 
-isTrueAt : EpistM -> State -> Expression a -> Bool
-isTrueAt model st expression =
+isTrueAt : EpistM -> State -> Formula a -> Bool
+isTrueAt model st formula =
     let
         (Mo sts ags rel val _) =
             model
     in
-        case expression of
+        case formula of
             Top ->
                 True
 
@@ -45,37 +45,64 @@ isTrueAt model st expression =
             Conj listOfConj ->
                 List.all (isTrueAt model st) listOfConj
 
-            Kn ag subexpr ->
+            Kn ag subform ->
                 case Acc.getEqClass ag st rel of
                     Just eq ->
-                        List.all (\s -> isTrueAt model s subexpr) eq
+                        List.all (\s -> isTrueAt model s subform) eq
 
                     Nothing ->
                         False
 
-            Pub upd subexpr ->
-                False
+            Pub upd subform ->
+                let
+                    newmodel =
+                        (upd_pa model upd)
+
+                    (Mo newsts _ _ _ _) =
+                        newmodel
+                in
+                    -- Current state must exist in the new model, otherwise announcement was false and formula therefore satisfied.
+                    if List.member st newsts then
+                        isTrueAt newmodel st subform
+                    else
+                        True
 
 
-upd_pa : EpistM -> Expression a -> EpistM
-upd_pa model expr =
+
+{-
+   Do a public announcement update.
+   States that carry over are the ones where the formula is true.
+   New accessability relation is done using restrict on the equivalence classes of every agent.
+-}
+
+
+upd_pa : EpistM -> Formula a -> EpistM
+upd_pa model formula =
     let
         (Mo st ags rel val current) =
             model
 
         newsts =
-            List.filter (\s -> isTrueAt model s expr) st
-
-        newval =
-            Val.filter (\k _ -> List.member k newsts) val
+            List.filter (\s -> isTrueAt model s formula) st
 
         newrel =
-            Acc.map (restrict newsts) rel
+            Acc.mapWithoutKey (restrict newsts) rel
     in
-        (Mo newsts ags newrel newval current)
+        (Mo newsts ags newrel val current)
+
+
+
+-- First checks all equivalence classes whether each state is a member of the set of states in the new model, if not they are removed from the equivalence class.
+-- Then apply a filter to remove all equivalence classes that had all its members removed.
 
 
 restrict : List State -> List EqClass -> List EqClass
 restrict states eqclasses =
-    List.filter (\y -> not <| y == []) <|
-        List.map (List.filter (\s -> List.member s states)) eqclasses
+    List.filter
+        (\y -> not <| y == [])
+    <|
+        List.map
+            (List.filter
+                (\s -> List.member s states)
+            )
+            eqclasses
