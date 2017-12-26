@@ -18,7 +18,7 @@ main =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { model = exampleModel }, Cmd.none )
+    ( { model = muddyChildren }, Cmd.none )
 
 
 
@@ -51,19 +51,36 @@ view model =
             model.model
     in
         div []
-            [ div []
-                [ text <| Form.show sampleExpr
-                , text "="
-                , text <| toString <| isTrueAt model.model 1 <| sampleExpr
-                ]
-            , div []
-                [ text <| Form.show <| Form.Atom Prop.p
-                , text "="
-                , text <| toString <| isTrueAt model.model 1 <| Form.Atom Prop.p
-                ]
+            [ text <| toString <| isTrueAt afterfirstupdatetwo 0 nooneknows
+            , text <| toString <| isTrueAt afterfirstupdatetwo 0 someoneknows
+            , text <| toString <| isTrueAt afterfirstupdatetwo 0 aknows
+            , text <| toString <| isTrueAt afterfirstupdatetwo 0 bknows
+            , text <| toString <| isTrueAt afterfirstupdatetwo 0 everyoneknows
+            , text <| toString <| isTrueAt secondupdatetwo 0 nooneknows
+            , text <| toString <| isTrueAt secondupdatetwo 0 someoneknows
+            , text <| toString <| isTrueAt secondupdatetwo 0 everyoneknows
+            , text <| toString <| isTrueAt thirdupdatetwo 0 nooneknows
+            , text <| toString <| isTrueAt thirdupdatetwo 0 someoneknows
+            , text <| toString <| isTrueAt thirdupdatetwo 0 everyoneknows
             ]
 
 
-sampleExpr : Formula a
-sampleExpr =
-    Form.Neg <| Form.Atom Prop.p
+showNupdatedmuddymodel : Formula a -> EpistM -> Int -> Html Msg
+showNupdatedmuddymodel formula model n =
+    div []
+        [ text <| Form.show formula
+        , text ", model updated "
+        , text <| toString n
+        , text " times = "
+        , text <| toString <| isTrueAt (updatedModel model n) 0 formula
+        ]
+
+
+updatedModel : EpistM -> Int -> EpistM
+updatedModel m n =
+    case n of
+        0 ->
+            m
+
+        n ->
+            upd_pa (updatedModel (upd_pa m nooneknows) (n - 1)) <| nooneknows

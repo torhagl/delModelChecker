@@ -5,10 +5,7 @@ import Agent exposing (..)
 
 type Prop
     = P Int
-    | Q Int
-    | R Int
-    | S Int
-    | Pred Agent Int -- Indicate that an agent has a number. Useful in situations where you are modeling agents holding cards or similar cases.
+    | Pred Agent Int -- Indicate that something is true for an agent, with an int for multiple propositions on same agent.
 
 
 p : Prop
@@ -18,17 +15,27 @@ p =
 
 q : Prop
 q =
-    Q 0
+    P 1
 
 
 r : Prop
 r =
-    R 0
+    P 2
 
 
 s : Prop
 s =
-    S 0
+    P 3
+
+
+getAgent : Prop -> Maybe Agent
+getAgent prop =
+    case prop of
+        P _ ->
+            Nothing
+
+        Pred ag _ ->
+            Just ag
 
 
 show : Prop -> String
@@ -39,24 +46,6 @@ show prop =
                 "p"
             else
                 "p" ++ toString int
-
-        Q int ->
-            if int == 0 then
-                "q"
-            else
-                "q" ++ toString int
-
-        R int ->
-            if int == 0 then
-                "r"
-            else
-                "r" ++ toString int
-
-        S int ->
-            if int == 0 then
-                "s"
-            else
-                "s" ++ toString int
 
         Pred ag int ->
             toString int ++ ag

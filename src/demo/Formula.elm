@@ -24,16 +24,16 @@ show formula =
             Prop.show prop
 
         Neg subform ->
-            "not(" ++ show subform ++ ")"
+            "(not(" ++ show subform ++ "))"
 
         Disj listOfDisj ->
             (List.foldl (++) "(" <| List.intersperse " or " <| List.map show listOfDisj) ++ ")"
 
         Conj listOfConj ->
-            (List.foldl (++) "(" <| List.intersperse " and " <| List.map show listOfConj) ++ ")"
+            (List.foldl (++) "((" <| List.intersperse ") and (" <| List.map show listOfConj) ++ "))"
 
         Kn ag subform ->
-            "(Kn" ++ ag ++ show subform ++ ")"
+            "(Kn" ++ ag ++ "(" ++ show subform ++ ")"
 
         Pub upd subform ->
             "([" ++ show upd ++ "]" ++ show subform ++ ")"
