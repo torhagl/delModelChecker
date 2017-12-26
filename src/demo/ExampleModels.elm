@@ -96,12 +96,12 @@ nooneknows =
 
 someoneknows : Formula a
 someoneknows =
-    Disj [ aknows, bknows, cknows ]
+    Disj [ aknows, bknows ]
 
 
 everyoneknows : Formula a
 everyoneknows =
-    Conj [ aknows, bknows, cknows ]
+    Conj [ aknows, bknows ]
 
 
 aknows : Formula a
@@ -114,9 +114,14 @@ bknows =
     agentknows Ag.b
 
 
-cknows : Formula c
+cknows : Formula a
 cknows =
     agentknows Ag.c
+
+
+agentdoesntknow : Agent -> Formula a
+agentdoesntknow ag =
+    Neg <| Kn ag <| Atom <| redhat ag
 
 
 agentknows : Agent -> Formula a
@@ -155,14 +160,14 @@ initupdatetwo =
 
 afterfirstupdatetwo : EpistM
 afterfirstupdatetwo =
-    (upd_pa (upd_pa muddyChildrenTwo firstupdatetwo) nooneknows)
+    (upd_pa initupdatetwo <| Conj [ agentdoesntknow Ag.a, agentdoesntknow Ag.b ])
 
 
 secondupdatetwo : EpistM
 secondupdatetwo =
-    (upd_pa (upd_pa (upd_pa muddyChildrenTwo firstupdatetwo) nooneknows) nooneknows)
+    (upd_pa afterfirstupdatetwo nooneknows)
 
 
 thirdupdatetwo : EpistM
 thirdupdatetwo =
-    (upd_pa (upd_pa (upd_pa (upd_pa muddyChildrenTwo firstupdatetwo) nooneknows) nooneknows) nooneknows)
+    (upd_pa secondupdatetwo nooneknows)

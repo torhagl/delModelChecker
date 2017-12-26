@@ -5,6 +5,9 @@ import Html exposing (..)
 import ExampleModels exposing (..)
 import Formula as Form exposing (Formula)
 import Prop
+import Agent as Ag exposing (Agent)
+import AccessRel as Acc
+import ValFunction as Val
 
 
 main =
@@ -51,28 +54,67 @@ view model =
             model.model
     in
         div []
-            [ text <| toString <| isTrueAt afterfirstupdatetwo 0 nooneknows
-            , text <| toString <| isTrueAt afterfirstupdatetwo 0 someoneknows
-            , text <| toString <| isTrueAt afterfirstupdatetwo 0 aknows
-            , text <| toString <| isTrueAt afterfirstupdatetwo 0 bknows
-            , text <| toString <| isTrueAt afterfirstupdatetwo 0 everyoneknows
-            , text <| toString <| isTrueAt secondupdatetwo 0 nooneknows
-            , text <| toString <| isTrueAt secondupdatetwo 0 someoneknows
-            , text <| toString <| isTrueAt secondupdatetwo 0 everyoneknows
-            , text <| toString <| isTrueAt thirdupdatetwo 0 nooneknows
-            , text <| toString <| isTrueAt thirdupdatetwo 0 someoneknows
-            , text <| toString <| isTrueAt thirdupdatetwo 0 everyoneknows
+            [ div []
+                [ text "After 'At least one red hat': "
+                , differentknows initupdatetwo
+                , htmlModel initupdatetwo
+                , text <| toString <| isTrueAt initupdatetwo 0 (Form.Pub (Form.Conj [ agentdoesntknow Ag.a, agentdoesntknow Ag.b ]) everyoneknows)
+                ]
+            , div []
+                [ text "After 'At least one red hat' and 1 we know nothing: "
+                , differentknows afterfirstupdatetwo
+                , htmlModel afterfirstupdatetwo
+                , text <| toString <| isTrueAt afterfirstupdatetwo 0 (Form.Pub (Form.Conj [ agentdoesntknow Ag.a, agentdoesntknow Ag.b ]) everyoneknows)
+                ]
+            , div []
+                [ text "After 'At least one red hat' and 2 we know nothing: "
+                , differentknows secondupdatetwo
+                , htmlModel secondupdatetwo
+                ]
             ]
 
 
-showNupdatedmuddymodel : Formula a -> EpistM -> Int -> Html Msg
-showNupdatedmuddymodel formula model n =
+htmlModel : EpistM -> Html Msg
+htmlModel (Mo sts ag acc val s) =
     div []
-        [ text <| Form.show formula
-        , text ", model updated "
-        , text <| toString n
-        , text " times = "
-        , text <| toString <| isTrueAt (updatedModel model n) 0 formula
+        [ div []
+            [ text "States: "
+            , text <| toString sts
+            ]
+        , div []
+            [ text "Agents: "
+            , text <| toString ag
+            ]
+        , div []
+            [ text "Acc: "
+            , text <| toString (Acc.toList acc)
+            ]
+        , div []
+            [ text "Val: "
+            , text <| toString (Val.toList val)
+            ]
+        , div []
+            [ text "Current state: "
+            , text <| toString s
+            ]
+        ]
+
+
+differentknows : EpistM -> Html Msg
+differentknows model =
+    div []
+        [ div []
+            [ text <| "Noone knows: "
+            , text <| toString <| isTrueAt model 0 nooneknows
+            ]
+        , div []
+            [ text <| "Someone knows: "
+            , text <| toString <| isTrueAt model 0 someoneknows
+            ]
+        , div []
+            [ text <| "Everyone knows: "
+            , text <| toString <| isTrueAt model 0 everyoneknows
+            ]
         ]
 
 
