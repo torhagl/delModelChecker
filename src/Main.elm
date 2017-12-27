@@ -21,7 +21,7 @@ main =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { model = muddyChildren }, Cmd.none )
+    ( { model = muddyChildrenTwo }, Cmd.none )
 
 
 
@@ -54,75 +54,8 @@ view model =
             model.model
     in
         div []
-            [ div []
-                [ text "After 'At least one red hat': "
-                , differentknows initupdatetwo
-                , htmlModel initupdatetwo
-                , text <| toString <| isTrueAt initupdatetwo 0 (Form.Pub (Form.Conj [ agentdoesntknow Ag.a, agentdoesntknow Ag.b ]) everyoneknows)
-                ]
-            , div []
-                [ text "After 'At least one red hat' and 1 we know nothing: "
-                , differentknows afterfirstupdatetwo
-                , htmlModel afterfirstupdatetwo
-                , text <| toString <| isTrueAt afterfirstupdatetwo 0 (Form.Pub (Form.Conj [ agentdoesntknow Ag.a, agentdoesntknow Ag.b ]) everyoneknows)
-                ]
-            , div []
-                [ text "After 'At least one red hat' and 2 we know nothing: "
-                , differentknows secondupdatetwo
-                , htmlModel secondupdatetwo
-                ]
+            [ div [] <|
+                List.reverse
+                    [ muddyModelsUpdatedN model.model
+                    ]
             ]
-
-
-htmlModel : EpistM -> Html Msg
-htmlModel (Mo sts ag acc val s) =
-    div []
-        [ div []
-            [ text "States: "
-            , text <| toString sts
-            ]
-        , div []
-            [ text "Agents: "
-            , text <| toString ag
-            ]
-        , div []
-            [ text "Acc: "
-            , text <| toString (Acc.toList acc)
-            ]
-        , div []
-            [ text "Val: "
-            , text <| toString (Val.toList val)
-            ]
-        , div []
-            [ text "Current state: "
-            , text <| toString s
-            ]
-        ]
-
-
-differentknows : EpistM -> Html Msg
-differentknows model =
-    div []
-        [ div []
-            [ text <| "Noone knows: "
-            , text <| toString <| isTrueAt model 0 nooneknows
-            ]
-        , div []
-            [ text <| "Someone knows: "
-            , text <| toString <| isTrueAt model 0 someoneknows
-            ]
-        , div []
-            [ text <| "Everyone knows: "
-            , text <| toString <| isTrueAt model 0 everyoneknows
-            ]
-        ]
-
-
-updatedModel : EpistM -> Int -> EpistM
-updatedModel m n =
-    case n of
-        0 ->
-            m
-
-        n ->
-            upd_pa (updatedModel (upd_pa m nooneknows) (n - 1)) <| nooneknows

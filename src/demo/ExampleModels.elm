@@ -80,48 +80,19 @@ muddyValTwo =
         ]
 
 
-firstUpdMuddy : Formula a
-firstUpdMuddy =
-    Disj
-        [ Atom (redhat Ag.a)
-        , Atom (redhat Ag.b)
-        , Atom (redhat Ag.c)
-        ]
+nooneknows : List Agent -> Formula a
+nooneknows agents =
+    Conj <| List.map (agentdoesntknow) agents
 
 
-nooneknows : Formula a
-nooneknows =
-    Neg someoneknows
-
-
-someoneknows : Formula a
-someoneknows =
-    Disj [ aknows, bknows ]
-
-
-everyoneknows : Formula a
-everyoneknows =
-    Conj [ aknows, bknows ]
-
-
-aknows : Formula a
-aknows =
-    agentknows Ag.a
-
-
-bknows : Formula a
-bknows =
-    agentknows Ag.b
-
-
-cknows : Formula a
-cknows =
-    agentknows Ag.c
+everyoneknows : List Agent -> Formula a
+everyoneknows agents =
+    Conj <| List.map agentknows agents
 
 
 agentdoesntknow : Agent -> Formula a
 agentdoesntknow ag =
-    Neg <| Kn ag <| Atom <| redhat ag
+    Neg <| agentknows ag
 
 
 agentknows : Agent -> Formula a
@@ -148,26 +119,23 @@ muddyValThree =
         ]
 
 
-firstupdatetwo : Formula a
-firstupdatetwo =
-    Disj [ Atom <| redhat Ag.a, Atom <| redhat Ag.b ]
+atleastoneredhat : List Agent -> Formula a
+atleastoneredhat agents =
+    Disj <| List.map (\ag -> Atom <| redhat ag) agents
 
 
-initupdatetwo : EpistM
-initupdatetwo =
-    upd_pa muddyChildrenTwo firstupdatetwo
+updateMuddymodelNTimes : EpistM -> Int -> EpistM
+updateMuddymodelNTimes epistm n =
+    let
+        (Demo.Mo _ ags _ _ _) =
+            epistm
+    in
+        case n of
+            0 ->
+                epistm
 
+            1 ->
+                upd_pa epistm <| atleastoneredhat ags
 
-afterfirstupdatetwo : EpistM
-afterfirstupdatetwo =
-    (upd_pa initupdatetwo <| Conj [ agentdoesntknow Ag.a, agentdoesntknow Ag.b ])
-
-
-secondupdatetwo : EpistM
-secondupdatetwo =
-    (upd_pa afterfirstupdatetwo nooneknows)
-
-
-thirdupdatetwo : EpistM
-thirdupdatetwo =
-    (upd_pa secondupdatetwo nooneknows)
+            n ->
+                upd_pa (updateMuddymodelNTimes (upd_pa epistm (nooneknows ags)) (n - 1)) <| nooneknows ags
