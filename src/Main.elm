@@ -3,11 +3,13 @@ module Main exposing (..)
 import DEMO_S5 exposing (..)
 import Html exposing (..)
 import ExampleModels exposing (..)
-import Formula as Form exposing (Formula)
-import Prop
-import Agent as Ag exposing (Agent)
-import AccessRel as Acc
-import ValFunction as Val
+import HtmlDemo exposing (..)
+import Bootstrap.CDN as CDN
+import Bootstrap.Grid as Grid
+import Bootstrap.Form.Input as Input
+import Bootstrap.Card as Card
+import Bootstrap.Grid.Col as Col
+import Bootstrap.Grid.Row as Row
 
 
 main =
@@ -53,9 +55,7 @@ view model =
         (Mo states agents accesRel valFunc currentState) =
             model.model
     in
-        div []
-            [ div [] <|
-                List.reverse
-                    [ muddyModelsUpdatedN model.model
-                    ]
+        Grid.container []
+            [ CDN.stylesheet
+            , htmlModel model.model
             ]
