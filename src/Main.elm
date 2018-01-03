@@ -52,10 +52,11 @@ update msg model =
 view : Model -> Html Msg
 view model =
     let
-        (Mo states agents accesRel valFunc currentState) =
+        (Mo states agents accessRel valFunc currentState) =
             model.model
     in
         Grid.container []
             [ CDN.stylesheet
             , htmlModel model.model
+            , muddyTwoModel
             ]
