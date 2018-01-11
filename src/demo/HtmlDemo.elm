@@ -36,12 +36,40 @@ htmlStates sts =
 
 stateNode : String -> StatePlacement -> List (Svg msg)
 stateNode radius ( state, coord ) =
-    [ circle [ cx <| toString coord.x, cy <| toString coord.y, r radius, fill "peachpuff" ] [], text_ [ x <| toString (coord.x - 5), y <| toString (coord.y + 5), fill "white" ] [ text <| toString state ] ]
+    [ circle
+        [ cx <| toString coord.x
+        , cy <| toString coord.y
+        , r radius
+        , fill "peachpuff"
+        ]
+        []
+    , text_
+        [ x <| toString (coord.x - 5)
+        , y <| toString (coord.y + 5)
+        , fill "white"
+        ]
+        [ text <| toString state ]
+    ]
 
 
 labeledEdge : EdgePlacement -> List (Svg msg)
 labeledEdge ( agent, ( coord1, coord2 ) ) =
-    [ line [ x1 <| toString coord1.x, y1 <| toString coord1.y, x2 <| toString coord2.x, y2 <| toString coord2.y, stroke "black", strokeWidth "1" ] [], text_ [ x <| toString (coord2.x // 2), y <| toString (coord2.y // 2), fill "black" ] [ text agent ] ]
+    [ line
+        [ x1 <| toString coord1.x
+        , y1 <| toString coord1.y
+        , x2 <| toString coord2.x
+        , y2 <| toString coord2.y
+        , stroke "black"
+        , strokeWidth "1"
+        ]
+        []
+    , text_
+        [ x <| toString ((coord1.x + coord2.x) // 2)
+        , y <| toString ((coord1.y + coord2.y) // 2)
+        , fill "black"
+        ]
+        [ text agent ]
+    ]
 
 
 type alias EdgePlacement =
